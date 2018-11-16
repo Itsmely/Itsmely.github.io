@@ -144,6 +144,94 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-dimension-design" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/16/dimension-design/">维度的基本设计方法</a>
+    </h1>
+  
+
+        
+        <a href="/2018/11/16/dimension-design/" class="archive-article-date">
+  	<time datetime="2018-11-16T13:35:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-16</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>维度的设计过程就是确定维度属性的过程，如何生成维度属性，以 及所生成的维度属性的优劣，决定了维度使用的方便性，成为数据仓库 易用性的关键。正如 Kimball 所说的，数据仓库的能力直接与维度属性的质量和深度成正比。</p>
+<p>下面以淘宝的商品维度为例对维度设计方法进行详细说明。 </p>
+<p>第一步：选择维度或新建维度。作为维度建模的核心，在企业级数 据仓库中必须保证维度的唯一性。以淘宝商品维度为例，有且只允许有 一个维度定义。</p>
+<p>第二步：确定主维表。此处的主维表一般是ODS 表，直接与业务系统同步。以淘宝商品维度为例， s_auction_ auctions 是与前台商品中心系统同步的商品表，此表即是主维表。</p>
+<p>第三步：确定相关维表。数据仓库是业务源系统的数据整合，不同业务系统或者同一业务系统中的表之间存在关联性。根据对业务的梳理，确定哪些表和主维表存在关联关系，并选择其中的某些表用于生成 维度属性。以淘宝商品维度为例，根据对业务逻辑的梳理，可以得到商品与类目、 SPU、卖家、店铺等维度存在关联关系。 </p>
+<p>第四步 ：确定维度属性。本步骤主要包括两个阶段，其中第一个阶段是从主维表中选择维度属性或生成新的维度属性；第二个阶段是从相 关维表中选择维度属性或生成新的维度属性。以淘宝商品维度为例，从 主维表 （ s_auction_auctions）和类目、 SPU、卖家、店铺等相关维表中选择维度属性或生成新的维度属性。 </p>
+<p>确定维度属性的几点提示：</p>
+<p>( 1 ）尽可能生成丰富的维度属性 </p>
+<p>比如淘宝商品维度有近百个维度属性，为下游的数据统计、分析、 探查提供了良好的基础。 </p>
+<p>( 2 ）尽可能多地给出包括一些富有意义的文字性描述 </p>
+<p>属性不应该是编码，而应该是真正的文字。在间里巴巴维度建模中， 一般是编码和文字同时存在，比如商品维度中的商品 ID 和商品标题、 类目 ID 和类目名称等。 ID 一般用于不同表之间的关联，而名称一般用 于报表标签。<br>( 3 ）区分数值型属性和事实 数值型宇段是作为事实还是维度属性，可以参考字段的一般用途。 </p>
+<p>如果通常用于查询约束条件或分组统计，则是作为维度属性；如果通常用于参与度量的计算， 则是作为事实。比如商品价格，可以用于查询约束条件或统计价格区间的商品数量，此时是作为维度属性使用的；也可 以用于统计某类目 下商品的平均价格，此时是作为事实使用的。另外，如果数值型字段是离散值，则作为维度属性存在的可能性较大；如果数值型宇段是连续值 ，则作为度量存在的可能性较大，但并不绝对，需要 同时参考宇段的具体用途。 </p>
+<p>( 4 ）尽量沉淀出通用的维度属性 </p>
+<p>有些维度属性获取需要进行比较复杂的逻辑处理，有些需要通过多表关联得到，或者通过单表的不同宇段混合处理得到，或者通过对单表的某个字段进行解析得到。此时，需要将尽可能多的通用的维度属性进 行沉淀。一方面，可以提高下游使用的方便性，减少复杂度；另一方面，可以避免下游使用解析时由于各自逻辑不同而导致口径不一致。</p>
+<p>例如， 淘宝商品的 property 字段，使用 key:value 方式存储多个商品属性。 商品品牌就存存储在此字段中，而商品品牌是重要的分组统计和查询约束 的条件，所以需要将品牌解析出来，作为品牌属性存在。例如，商品是否在线，即在淘宝网站是否可以查看到此商品，是重要的查询约束的条 件，但是无法直接获取，需要进行加工 ，加工逻辑是：商品状态为 0 和 1 且商品上架时间小于或等于当前时间，则是在线商品 ； 否则是非在线商品。所以需要封装商品是否在线的逻辑作为一个单独的属性字段。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/11/16/dimension-design/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-producer-consumer-modle" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -696,7 +784,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Hadoop</a>
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -704,7 +796,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
+                <a href="javascript:void(0)" class="js-tag color2">Hadoop</a>
               </li>
             
             <div class="clearfix"></div>
